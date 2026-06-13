@@ -32,7 +32,12 @@ io.on('connection', (socket) => {
   socket.on('join-event', (eventId) => socket.join(`event-${eventId}`));
 });
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/eventhub')
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI is not defined");
+  process.exit(1);
+}
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
     httpServer.listen(process.env.PORT || 5000, () => {
